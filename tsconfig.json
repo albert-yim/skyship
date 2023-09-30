@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "noImplicitAny": true,
     "removeComments": false,
     "preserveConstEnums": true,
@@ -12,7 +14,7 @@
     "declaration": true,
     "allowJs": true
   },
-  "include": ["src/**/*.ts", "src.**/*.tsx"],
+  "include": ["src"],
   "typeRoots": ["src/types"],
   "exclude": ["src/**/*.spec.ts", "node_modules"]
 }
