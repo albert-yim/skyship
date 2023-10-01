@@ -4,6 +4,7 @@ import "./App.css";
 import BATTLESHIP from "./assets/battleship.png";
 import useBattleship from "./components/battleship";
 import useBullet from "./components/bullet";
+import Enemy from "./components/enemy";
 
 const canvasWidth = 1024;
 const canvasHeight = 600;
@@ -12,32 +13,12 @@ function App() {
     useBattleship();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const bullet = useBullet(canvasRef.current, { x: 300, y: 300 });
+  const enemy = Enemy(canvasRef.current);
   useEffect(() => {
     document.addEventListener("keydown", keyDownEvent);
     drawGame();
   }, []);
-  // useEffect(() => {
-  //   if (canvasRef?.current) {
-  //     drawGame();
-  //   }
-  // }, [canvasRef?.current]);
-  // useEffect(() => {
-  //   update();
-  // }, [pos]);
-  // useEffect(() => {
-  //   keyEvents();
-  //   const canvas = canvasRef.current;
-  //   if (canvas) {
-  //     const ctx = canvas.getContext("2d");
-  //     if (!ctx) return;
-  //     ctx.drawImage(battleship, 0, 0);
-  //   }
-  // }, [battleship]);
 
-  // document.addEventListener("keydown", keyDownEvent);
-  const keyEvents = () => {
-    // document.addEventListener("keydown", keyDownEvent);
-  };
   const keyDownEvent = (e: KeyboardEvent) => {
     switch (e.key) {
       case "ArrowLeft":
@@ -68,10 +49,11 @@ function App() {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
     const msg = document.getElementById("log");
-    msg.innerText = `current pos: ${pos.x}`;
+    // msg.innerText = `${enemy.movePos.x} ${enemy.movePos.y}`;
     clearCanvas(ctx);
     drawSpaceShip(ctx);
-    bullet.moveBullet();
+    bullet.drawBullet();
+    enemy.drawEnemy();
   };
   window.requestAnimationFrame(drawGame);
   return (

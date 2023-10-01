@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Bullet } from "../class/Bullet";
+import useInterval from "../helper/useInterval";
 import { useObject } from "../helper/useObject";
 
 const startPos = {
@@ -6,16 +8,23 @@ const startPos = {
   y: 300,
 };
 const boundary = {
-  minX: startPos.x - 100,
-  minY: startPos.y - 100,
-  maxX: startPos.x + 100,
-  maxY: startPos.y + 100,
+  minX: startPos.x - 50,
+  minY: startPos.y - 50,
+  maxX: startPos.x + 50,
+  maxY: startPos.y + 50,
 };
-export default function Enemy(canvas: HTMLCanvasElement) {
-  const [pos, setPos] = useState({ x: 100, y: 10 });
-  const [movePos, _setMovePos] = useState({ x: 0, y: 0 });
-  const { pirate_ship } = useObject();
+const speed = 0.3;
 
+export default function Enemy(canvas: HTMLCanvasElement) {
+  const [pos, setPos] = useState(startPos);
+  const [movePos, _setMovePos] = useState({ x: 0, y: 0 });
+  const [bulletList, setBulletList] = useState<Bullet[]>([]);
+  const { pirate_ship, bullet: bulletImg } = useObject();
+
+  const shootBullet = () => {
+    const bullet: Bullet = new Bullet(bulletImg, pos.x, pos.y);
+    setBulletList((prev) => [...prev, bullet]);
+  };
   const moveEnemy = () => {
     setPos((prev) => {
       const { minX, minY, maxX, maxY } = boundary;
@@ -31,8 +40,8 @@ export default function Enemy(canvas: HTMLCanvasElement) {
     const negativeRandom = () => {
       return Math.round(Math.random()) * 2 - 1;
     };
-    const x = Math.random() * 0.3 * negativeRandom();
-    const y = Math.random() * 0.3 * negativeRandom();
+    const x = Math.random() * speed * negativeRandom();
+    const y = Math.random() * speed * negativeRandom();
     _setMovePos({ x, y });
   };
 
@@ -45,11 +54,18 @@ export default function Enemy(canvas: HTMLCanvasElement) {
     if (!ctx) return;
     moveEnemy();
     ctx.drawImage(pirate_ship, pos.x, pos.y);
+    bulletList?.map((bullet) => bullet.drawBullet(ctx));
+    updateBulletList();
+  };
+  const updateBulletList = () => {
+    const newBulletList = bulletList.filter((bullet) => bullet.isValid());
+    setBulletList(newBulletList);
   };
   useEffect(() => {
     // 2초 마다 해적선이 움직일 방향 바꾸기
     setInterval(() => setMovePos(), 3000);
   }, []);
+  useInterval(shootBullet, 3000);
   return {
     drawEnemy,
   };

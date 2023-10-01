@@ -7,12 +7,15 @@ type BulletType = {
     y: number;
   };
 };
-export default function useBullet(
+export type Bullet = {
+  drawBullet: () => void;
+};
+export default function useBullet_test(
   canvas: HTMLCanvasElement,
   initPos: { x: number; y: number },
-) {
+): Bullet {
   const [pos, setPos] = useState(initPos);
-  const moveBullet = () => {
+  const drawBullet = () => {
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
@@ -29,8 +32,6 @@ export default function useBullet(
   };
   const { bullet } = useObject();
   return {
-    bullet,
-    pos,
-    moveBullet,
+    drawBullet,
   };
 }
